@@ -6,13 +6,23 @@ const environments = {};
 environments.staging = {
     port: 3000,
     envName: 'staging',
-    secretKey: 'kjkjsadfsdkjasd'
+    secretKey: 'kjkjsadfsdkjasd',
+    twilio: {
+        fromPhone: '',
+        accountSid: '',
+        authToken: ''
+    }
 };
 
 environments.production = {
     port: 5000,
     envName: 'production',
-    secretKey: 'sdjhfskdjhfksjd'
+    secretKey: 'sdjhfskdjhfksjd',
+    twilio: {
+        fromPhone: '',
+        accountSid: '',
+        authToken: ''
+    }
 }
 
 // determine which env was passed
