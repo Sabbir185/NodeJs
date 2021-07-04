@@ -10,16 +10,16 @@ const handler = {};
 handler.tokenHandler = (requestProperties, callback) => {
     const acceptMethod = ['get', 'post', 'put', 'delete'];
     if (acceptMethod.indexOf(requestProperties.method) > -1) {
-        handler_token[requestProperties.method](requestProperties, callback);
+        handler._token[requestProperties.method](requestProperties, callback);
     } else {
         callback(405)
     }
 }
 
-handler_token = {};
+handler._token = {};
 
 // create & store token
-handler_token.post = (requestProperties, callback) => {
+handler._token.post = (requestProperties, callback) => {
     const phone = typeof requestProperties.body.phone === 'string' && requestProperties.body.phone.trim().length === 11 ? requestProperties.body.phone : false;
 
     const password = typeof requestProperties.body.password === 'string' && requestProperties.body.password.trim().length > 0 ? requestProperties.body.password : false;
@@ -59,7 +59,7 @@ handler_token.post = (requestProperties, callback) => {
 };
 
 // get token info
-handler_token.get = (requestProperties, callback) => {
+handler._token.get = (requestProperties, callback) => {
     const tokenId = typeof requestProperties.queryStringObject.id === 'string' && requestProperties.queryStringObject.id.trim().length === 20 ? requestProperties.queryStringObject.id : false;
 
     if (tokenId) {
@@ -82,7 +82,7 @@ handler_token.get = (requestProperties, callback) => {
 };
 
 // update token info
-handler_token.put = (requestProperties, callback) => {
+handler._token.put = (requestProperties, callback) => {
     const tokenId = typeof requestProperties.body.id === 'string' && requestProperties.body.id.trim().length === 20 ? requestProperties.body.id : false;
 
     const extend = typeof requestProperties.body.extend === 'boolean' ? requestProperties.body.extend : false;
@@ -119,7 +119,7 @@ handler_token.put = (requestProperties, callback) => {
 };
 
 // delete token
-handler_token.delete = (requestProperties, callback) => {
+handler._token.delete = (requestProperties, callback) => {
     const tokenId = typeof requestProperties.queryStringObject.id === 'string' && requestProperties.queryStringObject.id.trim().length === 20 ? requestProperties.queryStringObject.id : false;
 
     if (tokenId) {
@@ -149,6 +149,23 @@ handler_token.delete = (requestProperties, callback) => {
         })
     }
 };
+
+
+// general function for verify token
+handler._token.verify = (tokenId, phone, callback) => {
+    // read token
+    data.read('tokens', tokenId, (err, tokenData) => {
+        if (!err && tokenData) {
+            if (parseJSON(tokenData).phone === phone && parseJSON(tokenData).expires > Date.now()) {
+                callback(true)
+            } else {
+                callback(false)
+            }
+        } else {
+            callback(false)
+        }
+    })
+}
 
 
 // module export

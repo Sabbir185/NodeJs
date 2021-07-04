@@ -1,7 +1,8 @@
 // dependencies
 const data = require('../../lib/data');
 const { hash } = require('../../helpers/utilities');
-const { parseJSON } = require('../../helpers/utilities')
+const { parseJSON } = require('../../helpers/utilities');
+const tokenHandler = require('./tokenHandler');
 
 // module scaffolding
 const handler = {};
@@ -72,18 +73,27 @@ handler._user.get = (requestProperties, callback) => {
     const phone = typeof requestProperties.queryStringObject.phone === 'string' && requestProperties.queryStringObject.phone.trim().length === 11 ? requestProperties.queryStringObject.phone : false;
 
     if (phone) {
-        // read user data
-        data.read('users', phone, (err, uData) => {
-            const userData = { ...parseJSON(uData) }
-            if (!err && userData) {
-                delete userData.password;
-                callback(200, userData);
-            } else {
-                callback(500, {
-                    error: 'Error reading from server side!'
-                })
-            }
-        })
+        // token handler
+        const token = typeof requestProperties.headersObject.token === 'string' && requestProperties.headersObject.token.trim().length === 20 ? requestProperties.headersObject.token : false;
+
+        if (token) {
+            // read user data
+            data.read('users', phone, (err, uData) => {
+                const userData = { ...parseJSON(uData) }
+                if (!err && userData) {
+                    delete userData.password;
+                    callback(200, userData);
+                } else {
+                    callback(500, {
+                        error: 'Error reading from server side!'
+                    })
+                }
+            })
+        } else {
+            callback(403, {
+                Error: 'Authentication failure!'
+            })
+        }
     } else {
         callback(400, {
             Error: 'Error from your side!'
@@ -103,36 +113,45 @@ handler._user.put = (requestProperties, callback) => {
 
     if (phone) {
         if (firstName || lastName || password) {
-            // read file first
-            data.read('users', phone, (err1, uData) => {
-                const userData = { ...parseJSON(uData) };
-                if (!err1 && userData) {
-                    if (firstName) {
-                        userData.firstName = firstName;
-                    }
-                    if (lastName) {
-                        userData.lastName = lastName;
-                    }
-                    if (password) {
-                        userData.password = hash(password);
-                    }
-                    data.update('users', phone, userData, (err2) => {
-                        if(!err2){
-                            callback(200, {
-                                Error: 'User info update successful!'
-                            })
-                        }else{
-                            callback(500, {
-                                Error: 'There was a problem in server side!'
-                            })
+            // token handler
+            const token = typeof requestProperties.headersObject.token === 'string' && requestProperties.headersObject.token.trim().length === 20 ? requestProperties.headersObject.token : false;
+
+            if (token) {
+                // read user data
+                data.read('users', phone, (err1, uData) => {
+                    const userData = { ...parseJSON(uData) };
+                    if (!err1 && userData) {
+                        if (firstName) {
+                            userData.firstName = firstName;
                         }
-                    })
-                } else {
-                    callback(500, {
-                        Error: 'There was a problem in server side!'
-                    })
-                }
-            })
+                        if (lastName) {
+                            userData.lastName = lastName;
+                        }
+                        if (password) {
+                            userData.password = hash(password);
+                        }
+                        data.update('users', phone, userData, (err2) => {
+                            if (!err2) {
+                                callback(200, {
+                                    Error: 'User info update successful!'
+                                })
+                            } else {
+                                callback(500, {
+                                    Error: 'There was a problem in server side!'
+                                })
+                            }
+                        })
+                    } else {
+                        callback(500, {
+                            Error: 'There was a problem in server side!'
+                        })
+                    }
+                })
+            } else {
+                callback(403, {
+                    Error: 'Authentication failure!'
+                })
+            }
         } else {
             callback(400, {
                 Error: 'You have a problem in your request!'
@@ -149,33 +168,42 @@ handler._user.put = (requestProperties, callback) => {
 handler._user.delete = (requestProperties, callback) => {
     const phone = typeof requestProperties.queryStringObject.phone === 'string' && requestProperties.queryStringObject.phone.trim().length === 11 ? requestProperties.queryStringObject.phone : false;
 
-    if(phone){
-        // first read data
-        data.read('users', phone, (err1, userData)=>{
-            if(!err1 && userData){
-                data.delete('users', phone, (err2)=>{
-                    if(!err2){
-                        callback(200,{
-                            Message: "Delete successful!"
-                        })
-                    }else{
-                        callback(500, {
-                            error: 'Failed to delete!'
-                        })
-                    }
-                })
-            }else{
-                callback(500, {
-                    error: 'data Not found!'
-                })
-            }
-        })
-    }else{
+    if (phone) {
+        // token handler
+        const token = typeof requestProperties.headersObject.token === 'string' && requestProperties.headersObject.token.trim().length === 20 ? requestProperties.headersObject.token : false;
+
+        if (token) {
+            // read user data
+            data.read('users', phone, (err1, userData) => {
+                if (!err1 && userData) {
+                    data.delete('users', phone, (err2) => {
+                        if (!err2) {
+                            callback(200, {
+                                Message: "Delete successful!"
+                            })
+                        } else {
+                            callback(500, {
+                                error: 'Failed to delete!'
+                            })
+                        }
+                    })
+                } else {
+                    callback(500, {
+                        error: 'data Not found!'
+                    })
+                }
+            })
+        } else {
+            callback(403, {
+                Error: 'Authentication failure!'
+            })
+        }
+    } else {
         callback(400, {
             Error: 'Error in your request!'
         })
     }
- };
+};
 
 
 // module export
