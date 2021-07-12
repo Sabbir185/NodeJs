@@ -38,18 +38,18 @@ router.get('/', (req, res) => {
 })
 
 // get a todo
-router.get('/:id', (req, res) => {
-    Todo.find({ _id: req.params.id }, (err, data) => {
-        if (err) {
-            res.status(500).json({
-                error: 'There was a server side error!'
-            });
-        } else {
-            res.status(200).json({
-                result: data
-            })
-        }
-    })
+router.get('/:id', async (req, res) => {
+    // following async await , for callback see previews commit
+    try {
+        const data = await Todo.find({ _id: req.params.id });
+        res.status(200).json({
+            result: data
+        })
+    } catch (error) {
+        res.status(500).json({
+            error: 'There was a server side error!'
+        });
+    }
 })
 
 // post todo
