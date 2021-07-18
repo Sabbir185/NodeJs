@@ -1,18 +1,18 @@
-// external packages
+// external import
 const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const path = require('path');
 const cookieParser = require('cookie-parser');
 
-// internal packages
-const path = require('path');
-const { notFoundHandler, errorHandler } = require('./middlewares/common/errorHandler');
+// internal import
+const { notFoundError, errorHandler } = require('./middlewares/common/errorHandling');
 const loginRouter = require('./router/loginRouter');
 const usersRouter = require('./router/usersRouter');
-const inboxRouter = require('./router/inboxRouter');
+const inboxRouter = require('./router/indexRouter');
 
 // app initialization
-const app = express()
+const app = express();
 dotenv.config();
 
 // database connection
@@ -27,27 +27,27 @@ mongoose.connect(process.env.MONGO_CONNECTION_STRING, {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// set view engine
+// template engine
 app.set('view engine', 'ejs');
 
-// set static folder
+// static file
 app.use(express.static(path.join(__dirname, 'public')));
 
-// app cookie parser
+// cookie parser
 app.use(cookieParser(process.env.COOKIE_PARSER));
 
-// routing setup
-app.use("/", loginRouter);
+// router
+app.use('/', loginRouter);
 app.use('/users', usersRouter);
 app.use('/inbox', inboxRouter);
 
-// error handling
-app.use(notFoundHandler);
+// 404 not found error
+app.use(notFoundError);
 
-// common error handling
+// default error
 app.use(errorHandler);
 
 // server port
-app.listen(process.env.PORT || 8080, () => {
-    console.log(`Server listening port is ${process.env.PORT}`);
-});
+app.listen(process.env.PORT, () => {
+    console.log(`server is listening post ${process.env.PORT}`);
+})

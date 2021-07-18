@@ -3,11 +3,11 @@ const express = require('express');
 const router = express.Router();
 
 // internal import
-const { getLogin } = require('../controllers/loginController');
+const { getIndex } = require('../controllers/indexController');
 const  decorateHtmlResponse = require('../middlewares/common/decorateHtmlResponse');
 
 // user login route
-router.get('/', decorateHtmlResponse('Login'), getLogin);
+router.get('/', decorateHtmlResponse('Users'), getIndex);
 
 // module export
 module.exports = router;
