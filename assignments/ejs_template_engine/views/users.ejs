@@ -1,0 +1,10 @@
+<%- include('./includes/head.ejs') %>
+<body>
+    Total Entry :
+    <ul>
+        <% for (let user of users) { %>
+            <li><%= user %></li>
+        <% } %>
+    </ul>
+</body>
+</html>
