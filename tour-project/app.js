@@ -10,6 +10,8 @@ const tourData = JSON.parse(fs.readFileSync(path.join(`${__dirname}`, 'data/tour
 
 // app initialization
 const app = express();
+const tourRouter = express.Router();
+const UserRouter = express.Router();
 
 // middleware
 app.use(express.json())
@@ -18,6 +20,7 @@ app.use((req, res, next) => {
     req.requestTime = new Date().toISOString();
     next();
 })
+
 
 // router ..................
 // helper function for routes
@@ -111,6 +114,37 @@ const deleteTour = (req, res) => {
 }
 
 
+// for user
+const getUsers = (req, res) => {
+    res.status(500).json({
+        status: 'error',
+        message: 'this routes is not yet defined'
+    })
+}
+const getUser = (req, res) => {
+    res.status(500).json({
+        status: 'error',
+        message: 'this routes is not yet defined'
+    })
+}
+const createUser = (req, res) => {
+    res.status(500).json({
+        status: 'error',
+        message: 'this routes is not yet defined'
+    })
+}
+const updateUser = (req, res) => {
+    res.status(500).json({
+        status: 'error',
+        message: 'this routes is not yet defined'
+    })
+}
+const deleteUser = (req, res) => {
+    res.status(500).json({
+        status: 'error',
+        message: 'this routes is not yet defined'
+    })
+}
 
 // app.get('/api/v1/tours', getTours)
 // app.post('/api/v1/tours', postTour)
@@ -118,15 +152,28 @@ const deleteTour = (req, res) => {
 // app.patch('/api/v1/tours/:id', updateTour)
 // app.delete('/api/v1/tours/:id', deleteTour)
 
-app.route('/api/v1/tours')
+tourRouter.route('/')
     .get(getTours)
     .post(postTour)
 
-app.route('/api/v1/tours/:id')
+tourRouter.route('/:id')
     .get(getTour)
     .patch(updateTour)
     .delete(deleteTour)
 
+
+UserRouter.route('/')
+    .get(getUsers)
+    .post(createUser)
+
+UserRouter.route('/:id')
+    .get(getUser)
+    .patch(updateUser)
+    .delete(deleteUser)
+
+
+app.use('/api/v1/tours', tourRouter);
+app.use('/api/v1/users', UserRouter);
 
 // server listening
 app.listen(process.env.APP_PORT || 3000, () => {
