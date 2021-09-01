@@ -14,12 +14,19 @@ const app = express();
 // middleware
 app.use(express.json())
 
+app.use((req, res, next) => {
+    req.requestTime = new Date().toISOString();
+    next();
+})
+
 // router ..................
 // helper function for routes
 // get all tour
 const getTours = (req, res) => {
+    console.log(req.requestTime);   // middleware calling
     res.status(200).json({
         status: 'success',
+        requestAt: req.requestTime,  // middleware calling
         totalData: tourData.length,
         tourData
     })
