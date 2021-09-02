@@ -4,6 +4,19 @@ const path = require('path');
 
 const tourData = JSON.parse(fs.readFileSync(path.join(`${__dirname}`, '../data/tours-simple.json')))
 
+// general id validation check middleware
+exports.checkID = (req, res, next, val) => {
+    console.log(`This is from middleware & value is : ${val}`);
+
+    const id = req.params.id * 1;
+    if (id > tourData.length - 1) {
+        return res.status(404).json({
+            status: 'failed'
+        })
+    };
+
+    next();
+}
 
 // get all tour
 exports.getTours = (req, res) => {
@@ -21,12 +34,12 @@ exports.getTour = (req, res) => {
     const tourID = req.params.id * 1;
     const tour = tourData.find(el => el.id === tourID);
 
-    // if(tourID > tourData.length-1) 
-    if (!tour) {
-        res.status(400).json({
-            status: 'Data not found!'
-        })
-    }
+    // if(tourID > tourData.length-1)               // validation comes from middleware above
+    // if (!tour) {
+    //     res.status(400).json({
+    //         status: 'Data not found!'
+    //     })
+    // }
 
     res.status(200).json({
         status: 'Success',
@@ -79,11 +92,11 @@ exports.updateTour = (req, res) => {
 // delete tour
 exports.deleteTour = (req, res) => {
     const id = req.params.id * 1;
-    if (id > tourData.length - 1) {
-        res.status(404).json({
-            status: 'failed'
-        })
-    }
+    // if (id > tourData.length - 1) {              // validation comes from middleware above
+    //     res.status(404).json({
+    //         status: 'failed'
+    //     })
+    // }
 
     tourData.splice(id, 1);
 
