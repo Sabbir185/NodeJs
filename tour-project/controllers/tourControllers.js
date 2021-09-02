@@ -18,6 +18,17 @@ exports.checkID = (req, res, next, val) => {
     next();
 }
 
+// post tour validation
+exports.postValidation = (req, res, next) => {
+    if(!req.body.name || !req.body.price) {
+        return res.status(400).json({
+            status: 'failed',
+            msg: 'Name or price is missing!'
+        })
+    }
+    next();
+}
+
 // get all tour
 exports.getTours = (req, res) => {
     console.log(req.requestTime);   // middleware calling
