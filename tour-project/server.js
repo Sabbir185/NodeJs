@@ -1,8 +1,24 @@
-const app = require('./app');
+const app = require("./app");
+const mongoose = require("mongoose");
 
-console.log(process.env);
+const DB = process.env.DATABASE.replace(
+  "<PASSWORD>",
+  process.env.DATABASE_PASSWORD
+);
+
+mongoose
+  .connect(DB, {
+    useNewUrlParser: true,
+  })
+  .then(() => {
+    console.log("Database connection successful!");
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
 
 // server listening
 app.listen(process.env.APP_PORT || 3000, () => {
-    console.log(`Server is listening port ${process.env.APP_PORT}`);
-})
+  console.log(`Server is listening port ${process.env.APP_PORT}`);
+});
