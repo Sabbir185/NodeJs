@@ -1,40 +1,35 @@
 // internal module import
-const Tour = require('../models/tourModel')
-
-
-// post tour validation
-exports.postValidation = (req, res, next) => {
-    if(!req.body.name || !req.body.price) {
-        return res.status(400).json({
-            status: 'failed',
-            msg: 'Name or price is missing!'
-        })
-    }
-    next();
-}
+const Tour = require("../models/tourModel");
 
 // get all tour
-exports.getTours = (req, res) => {
-    
-}
+exports.getTours = (req, res) => {};
 
 // search by id
-exports.getTour = (req, res) => {
-   
-}
+exports.getTour = (req, res) => {};
 
 // post tour
-exports.postTour = (req, res) => {
-    
+exports.postTour = async (req, res) => {
+  try {
+    //   const newTour = new Tour({});
+    //   newTour.save();
+    const newTour = await Tour.create(req.body);
 
-}
+    res.status(200).json({
+      status: "success",
+      data: {
+        tour: newTour,
+      },
+    });
+  } catch(err) {
+    res.status(400).json({
+      status: "fail!",
+      message: err,
+    });
+  }
+};
 
 // update tour
-exports.updateTour = (req, res) => {
-    
-}
+exports.updateTour = (req, res) => {};
 
 // delete tour
-exports.deleteTour = (req, res) => {
-    
-}
+exports.deleteTour = (req, res) => {};
