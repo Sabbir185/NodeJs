@@ -4,9 +4,20 @@ const Tour = require("../models/tourModel");
 // get all tour
 exports.getTours = async (req, res) => {
   try {
-    const tours = await Tour.find();
+    // filtering
+    const queryObj = req.query;
+
+    // advance filtering
+    // we need {difficulty: easy, duration: {$gte: 5}}
+    let queryStr = JSON.stringify(queryObj);
+    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
+
+    console.log(JSON.parse(queryStr));
+
+    const tours = await Tour.find(JSON.parse(queryStr));
     res.status(200).json({
       status: "Success",
+      totalData: tours.length,
       tours: {
         data: tours,
       },
