@@ -15,13 +15,28 @@ exports.getTours = async (req, res) => {
     let tourData = Tour.find(JSON.parse(queryStr))
 
     // sorting
-    console.log(req.query.sort)
     if(req.query.sort){
-      const sortBy = req.query.sort.replace(',', " ");
+      const sortBy = req.query.sort.replace(',', " "); // for 2 or more, use split() and join() 
       tourData = tourData.sort(`${sortBy}`);
     }else{
       tourData = tourData.sort('-createdAt');
     }
+
+    // field limiting
+    if(req.query.fields){
+      const showFields = req.query.fields.split(',').join(' ');
+      tourData = tourData.select(`${showFields}`);
+    }else{
+      tourData = tourData.select(`-__v`); // - means except __v, all data will be showed
+    }
+
+    // pagination
+    const page = req.query.page * 1 || 1;
+    const limit = req.query.limit *1 || 20;
+    const skip = (page - 1) * limit;
+
+    tourData = tourData.skip(skip).limit(limit);
+    
 
     const tours = await tourData;
     res.status(200).json({
