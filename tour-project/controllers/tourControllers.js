@@ -18,9 +18,10 @@ exports.getTours = async (req, res) => {
     if(req.query.sort){
       const sortBy = req.query.sort.replace(',', " "); // for 2 or more, use split() and join() 
       tourData = tourData.sort(`${sortBy}`);
-    }else{
-      tourData = tourData.sort('-createdAt');
     }
+    // else{
+    //   tourData = tourData.sort('-createdAt');
+    // }
 
     // field limiting
     if(req.query.fields){
@@ -36,7 +37,11 @@ exports.getTours = async (req, res) => {
     const skip = (page - 1) * limit;
 
     tourData = tourData.skip(skip).limit(limit);
-    
+    // page handling of pagination
+    if(req.query.page){
+      const numTours = await Tour.countDocuments();
+      if( skip >= numTours ) throw new Error('Page not found!')
+    }
 
     const tours = await tourData;
     res.status(200).json({
@@ -49,7 +54,7 @@ exports.getTours = async (req, res) => {
   } catch (err) {
     res.status(404).json({
       status: "fail!",
-      message: err,
+      message: err.message,
     });
   }
 };
