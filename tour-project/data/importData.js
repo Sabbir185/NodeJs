@@ -5,7 +5,7 @@ require('dotenv').config();
 
 const Tour = require('../models/tourModel')
 
-const DB = `mongodb+srv://sabbir_ahmmed:<PASSWORD>@cluster0.ozoxu.mongodb.net/DATABASE?retryWrites=true&w=majority`;
+const DB = `mongodb://localhost/tours`;
 
 // database connection
 mongoose
