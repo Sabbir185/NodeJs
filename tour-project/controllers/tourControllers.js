@@ -198,3 +198,57 @@ exports.tourStats = async (req, res) => {
     });
   }
 }
+
+
+// aggregation pipeline: Find out best month for tour
+exports.busyMonth = async (req, res) => {
+  try {
+    const year = req.params.year * 1;
+   
+    const tourStats = await Tour.aggregate([
+      {
+        $unwind: '$startDates'
+      },
+      {
+        $match: {
+          startDates: {
+            $gte: new Date(`${year}-01-01`),
+            $lte: new Date(`${year}-12-31`)
+          }
+        }
+      },
+      {
+        $group: {
+          _id: { $month: '$startDates'}, // month return numeric number of month ex: feb = 2 
+          numTourStarts: { $sum: 1},
+          tours: { $push: '$name'}
+        }
+      },
+      {
+        $addFields: { month: '$_id'}  // to add any new field , $addFields is used
+      },
+      {
+        $project: {_id: 0}
+      },
+      {
+        $sort: {numTourStarts: -1}
+      },
+      // {
+      //   $limit: 2
+      // }
+    ])
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        tour: tourStats,
+      },
+    });
+    
+  } catch (err) {
+    res.status(404).json({
+      status: "fail",
+      msg: err,
+    });
+  }
+}
