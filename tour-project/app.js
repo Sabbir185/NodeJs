@@ -4,6 +4,8 @@ const morgan = require('morgan');
 require('dotenv').config();
 
 // internal module import
+const AppError = require('./utilities/appError');
+const globalErrorHandler = require('./middlewares/errorHandler');
 const tourRouter = require('./routes/tourRoutes');
 const UserRouter = require('./routes/userRoutes');
 
@@ -38,23 +40,18 @@ app.use('*', (req, res, next) => {
     // });
 
     // checking global error by through new Error()
-    const err = new Error(`Requested ${req.originalUrl} not found!`);
-    err.statusCode = 400;
-    err.status = 'failed';
-    next(err);
+    // const err = new Error(`Requested ${req.originalUrl} not found!`);
+    // err.statusCode = 400;
+    // err.status = 'failed';
+    // next(err);
+
+    // CODE OPTIMIZED: error class calling
+    next(new AppError(`Requested ${req.originalUrl} not found!`, 404));
 });
 
 
 // global error handling
-app.use((err, req, res, next) => {
-    err.statusCode = err.statusCode || 500;
-    err.status = err.status || 'error';
-
-    res.status(err.statusCode).json({
-        status: err.status,
-        message: err.message
-    });
-});
+app.use(globalErrorHandler);
 
 
 module.exports = app;
