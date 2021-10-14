@@ -1,6 +1,7 @@
 // internal module import
 const Tour = require("../models/tourModel");
 const APIFeatures = require('../utilities/apiFeatures');
+const catchAsync = require('../utilities/catchAsync');
 
 // middleware
 exports.aliasTopTours = (req, res, next) => {
@@ -11,10 +12,8 @@ exports.aliasTopTours = (req, res, next) => {
 };
 
 
-
 // get all tour
-exports.getTours = async (req, res) => {
-  try {
+exports.getTours = catchAsync(async (req, res) => {
     /* 
         // refectory code from utilities
         // filtering
@@ -72,35 +71,24 @@ exports.getTours = async (req, res) => {
         data: tours,
       },
     });
-  } catch (err) {
-    res.status(404).json({
-      status: "fail!",
-      message: err.message,
-    });
-  }
-};
+});
+
 
 // search by id
-exports.getTour = async (req, res) => {
-  try {
-    const tour = await Tour.findById(req.params.id);
-    res.status(200).json({
-      status: "success",
-      tour: {
-        data: tour,
-      },
-    });
-  } catch (err) {
-    res.status(404).json({
-      status: "fail!",
-      message: err,
-    });
-  }
-};
+exports.getTour = catchAsync(async (req, res) => {
+  const tour = await Tour.findById(req.params.id);
+
+  res.status(200).json({
+    status: "success",
+    tour: {
+      data: tour,
+    },
+  });
+
+});
 
 // post tour
-exports.postTour = async (req, res) => {
-  try {
+exports.postTour = catchAsync(async (req, res) => {
     //   const newTour = new Tour({});
     //   newTour.save();
     const newTour = await Tour.create(req.body);
@@ -111,17 +99,10 @@ exports.postTour = async (req, res) => {
         tour: newTour,
       },
     });
-  } catch (err) {
-    res.status(400).json({
-      status: "fail!",
-      message: err,
-    });
-  }
-};
+});
 
 // update tour
-exports.updateTour = async (req, res) => {
-  try {
+exports.updateTour = catchAsync(async (req, res) => {
     const updatedTour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
@@ -132,17 +113,11 @@ exports.updateTour = async (req, res) => {
         data: updatedTour,
       },
     });
-  } catch (err) {
-    res.status(404).json({
-      status: "fail",
-      msg: err,
-    });
-  }
-};
+
+});
 
 // delete tour
-exports.deleteTour = async (req, res) => {
-  try {
+exports.deleteTour = catchAsync(async (req, res) => {
     const d = await Tour.findByIdAndDelete(req.params.id);
     if (d === null) {
       res.status(404).json({
@@ -153,19 +128,12 @@ exports.deleteTour = async (req, res) => {
     res.status(201).json({
       status: "successfully delete!",
     });
-  } catch (err) {
-    res.status(404).json({
-      status: "fail",
-      msg: err,
-    });
-  }
-};
+
+});
 
 
 // aggregation pipeline
 exports.tourStats = async (req, res) => {
-  try {
-
     const tourStats = await Tour.aggregate([
       {
         $match: { ratingsAverage : {$gte: 4.5}}
@@ -190,19 +158,12 @@ exports.tourStats = async (req, res) => {
         tour: tourStats,
       },
     });
-    
-  } catch (err) {
-    res.status(404).json({
-      status: "fail",
-      msg: err,
-    });
-  }
-}
+  
+};
 
 
 // aggregation pipeline: Find out best month for tour
-exports.busyMonth = async (req, res) => {
-  try {
+exports.busyMonth = catchAsync(async (req, res) => {
     const year = req.params.year * 1;
    
     const tourStats = await Tour.aggregate([
@@ -245,10 +206,4 @@ exports.busyMonth = async (req, res) => {
       },
     });
     
-  } catch (err) {
-    res.status(404).json({
-      status: "fail",
-      msg: err,
-    });
-  }
-}
+});
