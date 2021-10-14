@@ -1,10 +1,12 @@
 const app = require("./app");
 const mongoose = require("mongoose");
 
-const DB = process.env.DATABASE.replace(
-  "<PASSWORD>",
-  process.env.DATABASE_PASSWORD
-);
+// const DB = process.env.DATABASE.replace(
+//   "<PASSWORD>",
+//   process.env.DATABASE_PASSWORD
+// );
+
+const DB = `mongodb://localhost/tours`;
 
 // database connection
 mongoose

@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-var slugify = require('slugify');
+const slugify = require('slugify');
 
 // Schema design
 const tourSchema = new mongoose.Schema({
@@ -20,7 +20,11 @@ const tourSchema = new mongoose.Schema({
     },
     difficulty: {
       type: String,
-      required: [true, 'Tour must have a difficulty']
+      required: [true, 'Tour must have a difficulty'],
+      enum: {
+        values: ['easy', 'medium', 'difficult'],
+        message: 'enter correct input'
+      }
     },
     ratingsAverage: {
       type: Number,
@@ -34,7 +38,15 @@ const tourSchema = new mongoose.Schema({
       type: Number,
       required: [true, "tour must have a price"],
     },
-    priceDiscount: Number,
+    priceDiscount: {
+      type: Number,
+      validate: {                            // CUSTOM VALIDATION ADDED
+        validator: function(value) {
+          return value < this.price;
+        },
+        message: 'discount price must less than ({VALUE}).'
+      },
+    },
     summary: {
       type: String,
       required: [true, "tour must have a summary"],
@@ -61,7 +73,7 @@ const tourSchema = new mongoose.Schema({
   },{
     toJSON: { virtuals: true},
     toObject: { virtuals: true}
-  });
+});
 
 
 // create a virtual calculation
@@ -77,7 +89,7 @@ tourSchema.pre('save', function(next) {
 });
 
 tourSchema.post('save', function(doc, next) {
-  console.log(doc);
+  // console.log(doc);
   next();
 })
 
@@ -91,7 +103,7 @@ tourSchema.pre(/^find/, function(next) {
 
 tourSchema.post(/^find/, function(doc, next) {
   console.log(`Query took ${Date.now() - this.start} millisecond!`);
-  console.log(doc);
+  // console.log(doc);
   next();
 })
 
@@ -99,7 +111,7 @@ tourSchema.post(/^find/, function(doc, next) {
 // AGGREGATION MIDDLEWARE: run before aggregate
 tourSchema.pre('aggregate', function(next) {
   this.pipeline().unshift({ $match: { secretTour: {$ne: true} }});
-  console.log(this.pipeline());
+  // console.log(this.pipeline());
   next();
 });
 
