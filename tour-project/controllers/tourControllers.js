@@ -212,7 +212,7 @@ exports.busyMonth = async (req, res) => {
       {
         $match: {
           startDates: {
-            $gte: new Date(`${year}-01-01`),
+            $gte: new Date(`${year}-01-01`),     // filter according to year and month
             $lte: new Date(`${year}-12-31`)
           }
         }
@@ -220,7 +220,7 @@ exports.busyMonth = async (req, res) => {
       {
         $group: {
           _id: { $month: '$startDates'}, // month return numeric number of month ex: feb = 2 
-          numTourStarts: { $sum: 1},
+          numTourStarts: { $sum: 1},     // how many people choice tour for specific month(startDates)
           tours: { $push: '$name'}
         }
       },
@@ -228,7 +228,7 @@ exports.busyMonth = async (req, res) => {
         $addFields: { month: '$_id'}  // to add any new field , $addFields is used
       },
       {
-        $project: {_id: 0}
+        $project: { _id: 0}   // to remove _id
       },
       {
         $sort: {numTourStarts: -1}
