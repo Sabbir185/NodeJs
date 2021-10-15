@@ -107,6 +107,7 @@ exports.postTour = catchAsync(async (req, res, next) => {
     });
 });
 
+
 // update tour
 exports.updateTour = catchAsync(async (req, res, next) => {
     const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
@@ -126,6 +127,7 @@ exports.updateTour = catchAsync(async (req, res, next) => {
     });
 
 });
+
 
 // delete tour
 exports.deleteTour = catchAsync(async (req, res, next) => {
