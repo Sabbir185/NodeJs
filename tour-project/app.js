@@ -33,7 +33,7 @@ app.use('/api/v1/users', UserRouter);
 
 
 // handle unwanted routes
-app.use('*', (req, res, next) => {
+app.all('*', (req, res, next) => {
     // res.status(404).json({
     //     status: 'failed',
     //     message: `Requested ${req.originalUrl} not found!`
