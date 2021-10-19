@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
+const bcrypt = require('bcrypt');
+
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -22,8 +24,30 @@ const userSchema = new mongoose.Schema({
     passwordConfirm: {
         type: 'String',
         required: [true, 'Please confirm your password'],
-        minlength: 8
+        minlength: 8,
+        validate: {
+            // this only work for save() and create(), not update()
+            validator: function(val) {
+                return val === this.password;
+            },
+            message: "Password confirmation is invalid"
+        }
     }
+});
+
+
+// password hashing before save 
+userSchema.pre('save', async function(next) {
+
+    // Only run this function if password was actually modified
+    if(!this.isModified('password')) return next();
+
+    // Hash the password with cost of 12
+    this.password = await bcrypt.hash(this.password, 12);
+
+    // Delete passwordConfirm field
+    this.passwordConfirm = undefined;
+    next();
 });
 
 
