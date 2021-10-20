@@ -17,6 +17,11 @@ const handleValidationError = err => {
     return new AppError(message, 400);
 }
 
+
+const handleJsonWebTokenError = () => new AppError('invalid signature, login again', 401);
+
+const handleJWTExpiredError = () => new AppError('Your token has expired! Please log in again.', 401);
+
 // DEVELOPMENT: send error details as much as possible 
 const sendErrorDev = (err, res) => {
     res.status(err.statusCode).json({
@@ -70,6 +75,11 @@ module.exports = (err, req, res, next) => {
         else if(err.name === 'ValidationError'){ 
             error = handleValidationError(err);
         }
+        else if(err.name === 'JsonWebTokenError'){ 
+            error = handleJsonWebTokenError();
+        }
+        else if(err.name === 'TokenExpiredError') error = handleJWTExpiredError();
+        
         
         error = !error ? err : error;
         sendErrorProd(error, res);

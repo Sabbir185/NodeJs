@@ -10,12 +10,13 @@ const {
   tourStats,
   busyMonth
 } = require("../controllers/tourControllers");
+const authController = require('../controllers/authController');
 
 const router = express.Router();
 
 router.route("/top-5-cheap").get(aliasTopTours, getTours);
 
-router.route("/").get(getTours).post(postTour);
+router.route("/").get(authController.protect, getTours).post(postTour);
 
 router.route("/tour-stats").get(tourStats)
 
