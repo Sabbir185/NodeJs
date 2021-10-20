@@ -10,6 +10,7 @@ const {
   tourStats,
   busyMonth
 } = require("../controllers/tourControllers");
+
 const authController = require('../controllers/authController');
 
 const router = express.Router();
@@ -22,6 +23,9 @@ router.route("/tour-stats").get(tourStats)
 
 router.route("/busyMonth/:year").get(busyMonth)
 
-router.route("/:id").get(getTour).patch(updateTour).delete(deleteTour);
+router.route("/:id")
+      .get(getTour)
+      .patch(updateTour)
+      .delete(authController.protect, authController.restrictTo('admin', 'lead-guide'), deleteTour);
 
 module.exports = router;

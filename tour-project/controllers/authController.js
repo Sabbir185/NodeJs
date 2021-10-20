@@ -15,11 +15,13 @@ const signToken = (id) => {
 
 // user sign up
 exports.signup = catchAsync(async (req, res, next) => {
+    console.log(req.body)
     const newUser = await User.create({
         name: req.body.name,
         email: req.body.email,
         password: req.body.password,
-        passwordConfirm: req.body.passwordConfirm
+        passwordConfirm: req.body.passwordConfirm,
+        role: req.body.role
     });
 
     const token = signToken(newUser._id);
@@ -87,3 +89,15 @@ exports.protect = catchAsync(async (req, res, next) => {
     req.user = currentUser
     next();
 })
+
+
+// authorization
+exports.restrictTo = ( ...roles ) => {
+    return (req, res, next) => {
+        if(!roles.includes(req.user.role)) {
+            return next(new AppError("You're not permitted for this action", 403));
+        }
+
+        next();
+    }
+}
