@@ -1,7 +1,11 @@
 // external module import
 const express = require('express');
 const morgan = require('morgan');
-const rateLimit = require('express-rate-limit')
+const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
+const hpp = require('hpp');
 require('dotenv').config();
 
 // internal module import
@@ -13,12 +17,17 @@ const UserRouter = require('./routes/userRoutes');
 // app initialization
 const app = express();
 
-// middleware
+// middleware ::
+// set security http headers
+app.use(helmet());
+
+// Development logging
 console.log(process.env.NODE_ENV)
 if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
 }
 
+// limit request from same API
 const limiter = rateLimit({
     max: 100,
     windowMs: 60*60*1000, // 1hr
@@ -26,10 +35,24 @@ const limiter = rateLimit({
 })
 app.use('/api', limiter);
 
-app.use(express.json())
+// body parser, reading data from body into req.body
+app.use(express.json({ limit: '50kb' })); // limit just optional
+
+// Data sanitize against NoSQL query injection
+app.use(mongoSanitize());
+
+// Data sanitize against XSS
+app.use(xss());
+
+// preventing parameter pollution
+app.use(hpp({
+    whitelist: ['duration', 'ratingsAverage', 'ratingsQuantity', 'price', 'maxGroupSize', 'difficulty']
+}))
+
+// Serving static files
 app.use(express.static(`${__dirname}/public/`));
 
-
+// Test middleware
 app.use((req, res, next) => {
     req.requestTime = new Date().toISOString();
     next();
