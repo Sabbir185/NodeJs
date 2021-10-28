@@ -13,6 +13,7 @@ const AppError = require('./utilities/appError');
 const globalErrorHandler = require('./middlewares/errorHandler');
 const tourRouter = require('./routes/tourRoutes');
 const UserRouter = require('./routes/userRoutes');
+const reviewRouter = require('./routes/reviewRoutes');
 
 // app initialization
 const app = express();
@@ -62,6 +63,7 @@ app.use((req, res, next) => {
 // routes
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', UserRouter);
+app.use('/api/v1/reviews', reviewRouter);
 
 
 // handle unwanted routes
