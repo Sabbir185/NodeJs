@@ -1,5 +1,7 @@
 const Review = require('../models/reviewModel');
 const catchAsync = require('../utilities/catchAsync');
+const factory = require('./handleRefactory');
+
 
 exports.getAllReviews = catchAsync(async (req, res, next) => {
     // nested 
@@ -18,17 +20,30 @@ exports.getAllReviews = catchAsync(async (req, res, next) => {
 });
 
 
-exports.createReview = catchAsync(async (req, res, next) => {
+exports.addTourAndUserId = (req, res, next) => {
     // allow nested route
     if(!req.body.tour) req.body.tour = req.params.tourId;
     if(!req.body.user) req.body.user = req.user.id;
+    next();
+}
 
-    const newReview = await Review.create(req.body);
+exports.createReview = factory.createOne(Review);
 
-    res.status(201).json({
-        status: 'success',
-        data: {
-            newReview
-        }
-    });
-})
+// exports.createReview = catchAsync(async (req, res, next) => {
+//     // allow nested route
+//     if(!req.body.tour) req.body.tour = req.params.tourId;
+//     if(!req.body.user) req.body.user = req.user.id;
+
+//     const newReview = await Review.create(req.body);
+
+//     res.status(201).json({
+//         status: 'success',
+//         data: {
+//             newReview
+//         }
+//     });
+// })
+
+
+exports.updateReview = factory.updateOne(Review);
+exports.deleteReview = factory.deleteOne(Review);

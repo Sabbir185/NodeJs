@@ -1,6 +1,8 @@
 const AppError = require('../utilities/appError');
 const User = require('../models/UserModel');
 const catchAsync = require('../utilities/catchAsync');
+const factory = require('./handleRefactory');
+
 
 
 const filteredObj = (obj, ...allowedFields) => {
@@ -17,7 +19,7 @@ const filteredObj = (obj, ...allowedFields) => {
 exports.getUsers = catchAsync(async(req, res) => {
     const users = await User.find();
 
-    res.status(500).json({
+    res.status(200).json({
         status: 'success',
         users: {
             users
@@ -64,21 +66,12 @@ exports.getUser = (req, res) => {
         message: 'this routes is not yet defined'
     })
 }
-exports.createUser = (req, res) => {
-    res.status(500).json({
-        status: 'error',
-        message: 'this routes is not yet defined'
-    })
-}
-exports.updateUser = (req, res) => {
-    res.status(500).json({
-        status: 'error',
-        message: 'this routes is not yet defined'
-    })
-}
-exports.deleteUser = (req, res) => {
-    res.status(500).json({
-        status: 'error',
-        message: 'this routes is not yet defined'
-    })
-}
+
+
+exports.createUser = factory.createOne(User);
+
+// Please don't use this for password change, bz of validation 
+exports.updateUser = factory.updateOne(User);
+
+// user delete by admin
+exports.deleteUser = factory.deleteOne(User);

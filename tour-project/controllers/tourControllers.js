@@ -3,7 +3,7 @@ const Tour = require("../models/tourModel");
 const APIFeatures = require('../utilities/apiFeatures');
 const catchAsync = require('../utilities/catchAsync');
 const AppError = require('../utilities/appError');
-const factory = require('./handleRefactory')
+const factory = require('./handleRefactory');
 
 // middleware
 exports.aliasTopTours = (req, res, next) => {
@@ -95,43 +95,47 @@ exports.getTour = catchAsync(async (req, res, next) => {
 
 
 // post tour
-exports.postTour = catchAsync(async (req, res, next) => {
-    //   const tour = new Tour({});
-    //   tour.save();
-    const tour = await Tour.create(req.body);
+exports.postTour = factory.createOne(Tour);
 
-    if(!tour) {
-      return next(new AppError('No tour found with that ID', 404));
-    }
+// exports.postTour = catchAsync(async (req, res, next) => {
+//     //   const tour = new Tour({});
+//     //   tour.save();
+//     const tour = await Tour.create(req.body);
 
-    res.status(200).json({
-      status: "success",
-      data: {
-        tour: newTour,
-      },
-    });
-});
+//     if(!tour) {
+//       return next(new AppError('No tour found with that ID', 404));
+//     }
+
+//     res.status(200).json({
+//       status: "success",
+//       data: {
+//         tour: tour,
+//       },
+//     });
+// });
 
 
 // update tour
-exports.updateTour = catchAsync(async (req, res, next) => {
-    const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
+exports.updateTour = factory.updateOne(Tour);
 
-    if(!tour) {
-      return next(new AppError('No tour found with that ID', 404));
-    }
+// exports.updateTour = catchAsync(async (req, res, next) => {
+//     const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
+//       new: true,
+//       runValidators: true,
+//     });
 
-    res.status(201).json({
-      status: "success",
-      tour: {
-        data: tour,
-      },
-    });
+//     if(!tour) {
+//       return next(new AppError('No tour found with that ID', 404));
+//     }
 
-});
+//     res.status(201).json({
+//       status: "success",
+//       tour: {
+//         data: tour,
+//       },
+//     });
+
+// });
 
 
 // delete tour
