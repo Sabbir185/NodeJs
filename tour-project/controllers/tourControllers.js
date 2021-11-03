@@ -3,6 +3,7 @@ const Tour = require("../models/tourModel");
 const APIFeatures = require('../utilities/apiFeatures');
 const catchAsync = require('../utilities/catchAsync');
 const AppError = require('../utilities/appError');
+const factory = require('./handleRefactory')
 
 // middleware
 exports.aliasTopTours = (req, res, next) => {
@@ -134,23 +135,25 @@ exports.updateTour = catchAsync(async (req, res, next) => {
 
 
 // delete tour
-exports.deleteTour = catchAsync(async (req, res, next) => {
-    const tour = await Tour.findByIdAndDelete(req.params.id);
-    if (tour === null) {
-      res.status(404).json({
-        message: "Bad request!",
-      });
-    }
+exports.deleteTour = factory.deleteOne(Tour);
 
-    if(!tour) {
-      return next(new AppError('No tour found with that ID', 404));
-    }
+// exports.deleteTour = catchAsync(async (req, res, next) => {
+//     const tour = await Tour.findByIdAndDelete(req.params.id);
+//     if (tour === null) {
+//       res.status(404).json({
+//         message: "Bad request!",
+//       });
+//     }
 
-    res.status(201).json({
-      status: "successfully delete!",
-    });
+//     if(!tour) {
+//       return next(new AppError('No tour found with that ID', 404));
+//     }
 
-});
+//     res.status(201).json({
+//       status: "successfully delete!",
+//     });
+
+// });
 
 
 // aggregation pipeline
