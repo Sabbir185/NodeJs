@@ -16,16 +16,18 @@ const filteredObj = (obj, ...allowedFields) => {
 
 
 // for user
-exports.getUsers = catchAsync(async(req, res) => {
-    const users = await User.find();
+exports.getUsers = factory.getAll(User);
 
-    res.status(200).json({
-        status: 'success',
-        users: {
-            users
-        }
-    })
-});
+// exports.getUsers = catchAsync(async(req, res) => {
+//     const users = await User.find();
+
+//     res.status(200).json({
+//         status: 'success',
+//         users: {
+//             users
+//         }
+//     })
+// });
 
 
 // update user self
@@ -60,14 +62,9 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
 
 
 
-exports.getUser = (req, res) => {
-    res.status(500).json({
-        status: 'error',
-        message: 'this routes is not yet defined'
-    })
-}
+exports.getUser = factory.getOne(User);
 
-
+// don't use it, use signup route for create new one
 exports.createUser = factory.createOne(User);
 
 // Please don't use this for password change, bz of validation 

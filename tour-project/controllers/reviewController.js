@@ -3,21 +3,24 @@ const catchAsync = require('../utilities/catchAsync');
 const factory = require('./handleRefactory');
 
 
-exports.getAllReviews = catchAsync(async (req, res, next) => {
-    // nested 
-    let filter = {};
-    if(req.params.tourId) filter = {tour: req.params.tourId};
 
-    const reviews = await Review.find( filter );
+exports.getAllReviews = factory.getAll(Review);
 
-    res.status(200).json({
-        status: 'success',
-        result: reviews.length,
-        data: {
-            reviews
-        }
-    });
-});
+// exports.getAllReviews = catchAsync(async (req, res, next) => {
+//     // nested 
+//     let filter = {};
+//     if(req.params.tourId) filter = {tour: req.params.tourId};
+
+//     const reviews = await Review.find( filter );
+
+//     res.status(200).json({
+//         status: 'success',
+//         result: reviews.length,
+//         data: {
+//             reviews
+//         }
+//     });
+// });
 
 
 exports.addTourAndUserId = (req, res, next) => {
@@ -44,6 +47,6 @@ exports.createReview = factory.createOne(Review);
 //     });
 // })
 
-
+exports.getReview = factory.getOne(Review);
 exports.updateReview = factory.updateOne(Review);
 exports.deleteReview = factory.deleteOne(Review);
