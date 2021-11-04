@@ -4,6 +4,8 @@ const path = require('path')
 require('dotenv').config();
 
 const Tour = require('../models/tourModel')
+const User = require('../models/UserModel')
+const Review = require('../models/reviewModel')
 
 const DB = `mongodb://localhost/tours`;
 
@@ -22,12 +24,16 @@ mongoose
 
 // read data from JSON file
 const tours = JSON.parse(fs.readFileSync(path.join(`${__dirname}`,'/tours.json')), 'utf-8');
+const users = JSON.parse(fs.readFileSync(path.join(`${__dirname}`,'/users.json')), 'utf-8');
+const reviews = JSON.parse(fs.readFileSync(path.join(`${__dirname}`,'/reviews.json')), 'utf-8');
 
 
 // export data into DB
 const exportData = async () => {
     try{
         await Tour.create(tours);
+        await User.create(users);
+        await Review.create(reviews);
         console.log('Data successfully loaded!');
     }catch(err) {
         console.log(err);
@@ -39,6 +45,8 @@ const exportData = async () => {
 const deleteData = async () => {
     try{
         await Tour.deleteMany();
+        await User.deleteMany();
+        await Review.deleteMany();
         console.log('Data deleted!');
     }catch(err) {
         console.log(err);
