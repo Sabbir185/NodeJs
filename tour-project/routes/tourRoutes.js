@@ -19,15 +19,22 @@ const router = express.Router();
 
 router.route("/top-5-cheap").get(aliasTopTours, getTours);
 
-router.route("/").get(authController.protect, getTours).post(postTour);
+router.route("/")
+      .get(getTours)
+      .post(authController.protect, 
+        authController.restrictTo('admin', 'lead-guide'), 
+        postTour);
 
 router.route("/tour-stats").get(tourStats)
 
-router.route("/busyMonth/:year").get(busyMonth)
+router.route("/busyMonth/:year")
+      .get(authController.protect, 
+        authController.restrictTo('admin', 'lead-guide', 'guide'), 
+        busyMonth)
 
 router.route("/:id")
       .get(getTour)
-      .patch(updateTour)
+      .patch(authController.protect, authController.restrictTo('admin', 'lead-guide'), updateTour)
       .delete(authController.protect, authController.restrictTo('admin', 'lead-guide'), deleteTour);
 
 

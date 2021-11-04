@@ -29,6 +29,10 @@ exports.getUsers = factory.getAll(User);
 //     })
 // });
 
+exports.getMe = (req, res, next) => {
+    req.params.id = req.user.id;
+    next();
+};
 
 // update user self
 exports.updateMe = catchAsync(async(req, res, next) => {
