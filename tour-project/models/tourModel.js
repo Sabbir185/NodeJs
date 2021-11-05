@@ -166,11 +166,11 @@ tourSchema.post(/^find/, function(doc, next) {
 
 
 // AGGREGATION MIDDLEWARE: run before aggregate
-tourSchema.pre('aggregate', function(next) {
-  this.pipeline().unshift({ $match: { secretTour: {$ne: true} }});
-  // console.log(this.pipeline());
-  next();
-});
+// tourSchema.pre('aggregate', function(next) {
+//   this.pipeline().unshift({ $match: { secretTour: {$ne: true} }});
+//   // console.log(this.pipeline());
+//   next();
+// });
 
   
 // create model

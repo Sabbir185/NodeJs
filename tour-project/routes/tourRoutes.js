@@ -9,7 +9,8 @@ const {
   aliasTopTours,
   tourStats,
   busyMonth,
-  getToursWithin
+  getToursWithin,
+  getDistances
 } = require("../controllers/tourControllers");
 
 const authController = require('../controllers/authController');
@@ -21,6 +22,8 @@ const router = express.Router();
 router.route("/top-5-cheap").get(aliasTopTours, getTours);
 
 router.get('/tours-within/:distance/center/:latlng/unit/:unit', getToursWithin);
+
+router.get('/distance/:latlng/unit/:unit', getDistances);
 
 router.route("/")
       .get(getTours)
