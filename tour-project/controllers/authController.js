@@ -25,7 +25,7 @@ const sendResponse = (user, statusCode, res) => {
 
     if(process.env.NODE_ENV === 'production') cookieOptions.secure = true;
 
-    res.cookie('tour-jwt', token, cookieOptions);
+    res.cookie('jwt', token, cookieOptions);
 
     // hide password from output
     user.password = undefined;
@@ -81,6 +81,9 @@ exports.protect = catchAsync(async (req, res, next) => {
     let token;
     if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
         token = req.headers.authorization.split(' ')[1];
+
+    } else if(req.cookies){
+        token = req.cookies.jwt;
     }
 
     if(!token) {

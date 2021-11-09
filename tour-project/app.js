@@ -7,6 +7,7 @@ const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
+const cookieParser = require('cookie-parser');
 require('dotenv').config();
 
 // internal module import
@@ -46,6 +47,7 @@ app.use('/api', limiter);
 
 // body parser, reading data from body into req.body
 app.use(express.json({ limit: '50kb' })); // limit just optional
+app.use(cookieParser());
 
 // Data sanitize against NoSQL query injection
 app.use(mongoSanitize());
