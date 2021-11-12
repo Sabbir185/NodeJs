@@ -1,5 +1,6 @@
 const AppError = require('../utilities//appError');
 
+
 const handleCastErrorDB = err => {
     const message = `Invalid ${err.path} : ${err.value}.`;
     return new AppError(message, 400);
@@ -22,19 +23,28 @@ const handleJsonWebTokenError = () => new AppError('invalid signature, login aga
 
 const handleJWTExpiredError = () => new AppError('Your token has expired! Please log in again.', 401);
 
+
 // DEVELOPMENT: send error details as much as possible 
-const sendErrorDev = (err, res) => {
-    res.status(err.statusCode).json({
-        status: err.status,
-        error: err,
-        message: err.message,
-        stack: err.stack
-    });
+const sendErrorDev = (err, req, res, next) => {
+    // api response
+        // res.status(err.statusCode).json({
+        //     status: err.status,
+        //     error: err,
+        //     message: err.message,
+        //     stack: err.stack
+        // });
+
+    console.log('error -> ', err);
+    // render page
+    res.status(200).render('error', {
+        title: 'Something wrong!',
+        msg: err.message
+    })
 };
 
 
 // PRODUCTION
-const sendErrorProd = (err, res) => {
+const sendErrorProd = (err, req, res, next) => {
     // Operational, trusted error: send message to client
     if(err.isOperational) {
         res.status(err.statusCode).json({
@@ -62,7 +72,7 @@ module.exports = (err, req, res, next) => {
     err.status = err.status || 'error';
 
     if(process.env.NODE_ENV === 'development') {
-        sendErrorDev(err, res);
+        sendErrorDev(err, req, res, next);
         
     } else if(process.env.NODE_ENV === 'production') {
         let error;
@@ -82,6 +92,6 @@ module.exports = (err, req, res, next) => {
         
         
         error = !error ? err : error;
-        sendErrorProd(error, res);
+        sendErrorProd(error, req, res, next);
     }
 };
