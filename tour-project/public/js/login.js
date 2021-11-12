@@ -1,20 +1,28 @@
 
 const handleLogin = async (email, password) => {
-    console.log(email, password)
-
     const data = {
         email,
         password
     }
    
-    await fetch('http://localhost:8080/api/v1/users/login', {
+    fetch('http://localhost:8080/api/v1/users/login', {
             method: 'POST',
             headers: {'content-type': 'application/json'},
             body: JSON.stringify(data)
         })
         .then(res => res.json())
-        .then(data => console.log(data))
-        .catch(error =>  console.log(error))
+        .then(data => {
+            if(data.status === 'successful'){
+                alert('login successful!');
+                window.setTimeout(() => {
+                    location.assign('/');
+                }, 1500);
+
+            }else if(data.status === 'failed'){
+                alert('email or password invalid!!');
+            }
+        })
+        .catch(error =>  alert('email or password invalid!') )
 }
 
 document.querySelector('.form').addEventListener('submit', e => {
@@ -24,3 +32,4 @@ document.querySelector('.form').addEventListener('submit', e => {
 
     handleLogin(email, password)
 })
+
