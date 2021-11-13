@@ -25,7 +25,7 @@ const handleLogin = async (email, password) => {
         .catch(error =>  alert('email or password invalid!') )
 }
 
-document.querySelector('.form').addEventListener('submit', e => {
+document.querySelector('.login--from').addEventListener('submit', e => {
     e.preventDefault();
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;

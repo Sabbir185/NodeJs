@@ -5,13 +5,15 @@ const viewController = require('../controllers/viewController')
 const authController = require('../controllers/authController');
 
 
-router.use(authController.isLogin)
+router.get('/', authController.isLogin, viewController.getOverview);
 
-router.get('/', viewController.getOverview);
+router.get('/tour/:slug', authController.isLogin, viewController.getTour);
 
-router.get('/tour/:slug', viewController.getTour);
+router.get('/login', authController.isLogin, viewController.login);
 
-router.get('/login', viewController.login);
+router.get('/me', authController.protect, viewController.account);
+
+router.post('/submit-user-data', authController.protect, viewController.updateUserData);
 
 
 module.exports = router;
