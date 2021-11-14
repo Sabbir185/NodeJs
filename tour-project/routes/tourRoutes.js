@@ -10,7 +10,9 @@ const {
   tourStats,
   busyMonth,
   getToursWithin,
-  getDistances
+  getDistances,
+  updateTourImage,
+  resizeTourImages
 } = require("../controllers/tourControllers");
 
 const authController = require('../controllers/authController');
@@ -40,7 +42,11 @@ router.route("/busyMonth/:year")
 
 router.route("/:id")
       .get(getTour)
-      .patch(authController.protect, authController.restrictTo('admin', 'lead-guide'), updateTour)
+      .patch(updateTourImage, 
+          resizeTourImages, 
+          authController.protect, 
+          authController.restrictTo('admin', 'lead-guide'), 
+          updateTour)
       .delete(authController.protect, authController.restrictTo('admin', 'lead-guide'), deleteTour);
 
 

@@ -1,26 +1,30 @@
 
 const updateSetting = (data, type) => {
+
     const url = type === 'password' ? 'http://localhost:8080/api/v1/users/updateMyPassword' : 'http://localhost:8080/api/v1/users/updateMe';
 
-    fetch(url, {
+    const option = type === 'password' ? {
         method: 'PATCH',
-        headers: {'content-type': 'application/json'},
-        body: JSON.stringify(data)
-    })
-    .then(res => res.json())
-    .then( data => {
-        console.log(data);
-        if(data.status === 'success' || data.status === 'successful'){
-            alert('Update successful!');
-            location.reload(true);
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+    }
+        :
+        {
+            method: 'PATCH',
+            body: data,
         }
 
-        if(data.status === 'success' || data.status === 'successful'){
-            alert('Update successful!');
-            location.reload(true);
-        }
-    })
-    .then( err => alert(err.message) );
+    fetch(url, option)
+        .then(res => res.json())
+        .then(data => {
+            console.log(data);
+            if (data.status === 'success' || data.status === 'successful') {
+                alert('Update successful!');
+                location.reload(true);
+            }
+
+        })
+        .catch(err => alert(err.message));
 }
 
 
@@ -28,16 +32,13 @@ const updateSetting = (data, type) => {
 document.querySelector('.form-user-data').addEventListener('submit', e => {
     e.preventDefault();
 
-    const name = document.querySelector('#name').value;
-    const email = document.querySelector('#email').value;
+    const form = new FormData();
+    form.append('name', document.getElementById('name').value);
+    form.append('email', document.getElementById('email').value);
+    form.append('photo', document.getElementById('photo').files[0]);
 
-    const data = {
-        name,
-        email
-    };
+    updateSetting(form, "data");
 
-    updateSetting(data, "data");
-    
 })
 
 
@@ -64,5 +65,5 @@ document.querySelector('.form-user-password').addEventListener('submit', async e
     document.querySelector('#password-current').value = '';
     document.querySelector('#password').value = '';
     document.querySelector('#password-confirm').value = '';
-    
+
 })
