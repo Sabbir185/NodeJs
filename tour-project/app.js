@@ -17,6 +17,7 @@ const tourRouter = require('./routes/tourRoutes');
 const UserRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
 const viewRouter = require('./routes/viewRoutes');
+const bookingRouter = require('./routes/bookingRouters');
 
 // app initialization
 const app = express();
@@ -74,6 +75,7 @@ app.use('/', viewRouter);
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', UserRouter);
 app.use('/api/v1/reviews', reviewRouter);
+app.use('/api/v1/bookings', bookingRouter);
 
 
 // handle unwanted routes
