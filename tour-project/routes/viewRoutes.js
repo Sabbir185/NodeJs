@@ -14,6 +14,8 @@ router.get('/login', authController.isLogin, viewController.login);
 
 router.get('/me', authController.protect, viewController.account);
 
+router.get('/my-booking', authController.protect, viewController.myBookingTour);
+
 router.post('/submit-user-data', authController.protect, viewController.updateUserData);
 
 

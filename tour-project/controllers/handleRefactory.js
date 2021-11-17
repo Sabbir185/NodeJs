@@ -87,7 +87,8 @@ exports.getAll = Model =>
         .fieldLimit()
         .pagination();
 
-        const doc = await features.tourData.explain();
+        // const doc = await features.tourData.explain();
+        const doc = await features.tourData;
 
         res.status(200).json({
             status: "Success",
