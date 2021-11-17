@@ -3,9 +3,10 @@ const router = express.Router();
 
 const viewController = require('../controllers/viewController')
 const authController = require('../controllers/authController');
+const bookingController = require('../controllers/bookingController');
 
 
-router.get('/', authController.isLogin, viewController.getOverview);
+router.get('/', bookingController.createBookingCheckout, authController.isLogin, viewController.getOverview);
 
 router.get('/tour/:slug', authController.isLogin, viewController.getTour);
 
