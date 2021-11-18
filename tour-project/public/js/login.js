@@ -5,7 +5,7 @@ const handleLogin = async (email, password) => {
         password
     }
    
-    fetch('http://localhost:8080/api/v1/users/login', {
+    fetch('/api/v1/users/login', {
             method: 'POST',
             headers: {'content-type': 'application/json'},
             body: JSON.stringify(data)

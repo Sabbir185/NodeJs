@@ -1,7 +1,7 @@
 
 const updateSetting = (data, type) => {
 
-    const url = type === 'password' ? 'http://localhost:8080/api/v1/users/updateMyPassword' : 'http://localhost:8080/api/v1/users/updateMe';
+    const url = type === 'password' ? '/api/v1/users/updateMyPassword' : '/api/v1/users/updateMe';
 
     const option = type === 'password' ? {
         method: 'PATCH',

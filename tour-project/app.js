@@ -8,6 +8,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
+const compression = require('compression')
 require('dotenv').config();
 
 // internal module import
@@ -62,6 +63,8 @@ app.use(hpp({
     whitelist: ['duration', 'ratingsAverage', 'ratingsQuantity', 'price', 'maxGroupSize', 'difficulty']
 }))
 
+
+app.use(compression())
 
 // Test middleware
 app.use((req, res, next) => {
