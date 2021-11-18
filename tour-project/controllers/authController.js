@@ -16,17 +16,21 @@ const signToken = (id) => {
 }
 
 // send response with token and data
-const sendResponse = (user, statusCode, res) => {
+const sendResponse = (user, statusCode, req, res) => {
     const token = signToken(user._id);
 
-    const cookieOptions = {
+    // const cookieOptions = {
+    //     expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRE_IN * 24 * 60 * 60 * 1000),
+    //     httpOnly: true
+    // }
+
+    // if(process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+
+    res.cookie('jwt', token, {
         expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRE_IN * 24 * 60 * 60 * 1000),
-        httpOnly: true
-    }
-
-    if(process.env.NODE_ENV === 'production') cookieOptions.secure = true;
-
-    res.cookie('jwt', token, cookieOptions);
+        httpOnly: true,
+        secure: req.secure || req.headers['x-forwarded-proto'] === 'https'
+    });
 
     // hide password from output
     user.password = undefined;
@@ -39,6 +43,8 @@ const sendResponse = (user, statusCode, res) => {
         }
     })
 }
+
+
 
 // user sign up
 exports.signup = catchAsync(async (req, res, next) => {
@@ -55,7 +61,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     await new Email(newUser, url).sendWelcome();
     console.log(url)
 
-    sendResponse(newUser, 201, res);
+    sendResponse(newUser, 201, req, res);
 });
 
 
@@ -76,7 +82,7 @@ exports.login = catchAsync(async (req, res, next) => {
     }
 
     // 3. if everything is ok, send token to the client
-    sendResponse(user, 200, res);
+    sendResponse(user, 200, req, res);
 });
 
 
@@ -228,7 +234,7 @@ exports.resetPassword = catchAsync(async(req, res, next) => {
 
     // 3) Update changedPasswordAt property for the user, applied in userModel
     // 4) Log the user in, send jwt
-    sendResponse(user, 200, res);
+    sendResponse(user, 200, req, res);
 });
 
 
@@ -248,6 +254,6 @@ exports.updateMyPassword = catchAsync(async(req, res, next) => {
     await user.save();
 
     // 4) log user in, send jwt
-    sendResponse(user, 200, res);
+    sendResponse(user, 200, req, res);
 
 });

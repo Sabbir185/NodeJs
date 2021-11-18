@@ -23,7 +23,7 @@ mongoose
   .then(() => {
     console.log("Database connection successful!");
   })
- // no need catch because of global unhandled rejection 
+// no need catch because of global unhandled rejection 
 
 
 // server listening
@@ -38,5 +38,13 @@ process.on('unhandledRejection', err => {
   console.log(err.name, err.message);
   server.close(() => {
     process.exit(1);
+  });
+});
+
+
+process.on('SIGTERM', () => {
+  console.log('👋 SIGTERM RECEIVED. Shutting down gracefully');
+  server.close(() => {
+    console.log('💥 Process terminated!');
   });
 });

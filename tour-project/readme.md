@@ -3,6 +3,4 @@
 
 <hr>
 
-#### project live site link : 
-
-#### heroku host server link : 
+#### project live site link : https://sabbir-natours.herokuapp.com/

@@ -8,7 +8,8 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
-const compression = require('compression')
+const compression = require('compression');
+const cors = require('cors')
 require('dotenv').config();
 
 // internal module import
@@ -23,10 +24,22 @@ const bookingRouter = require('./routes/bookingRouters');
 // app initialization
 const app = express();
 
+app.enable('trust proxy');
+
+
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
 // middleware ::
+
+app.use(cors());
+// Access-Control-Allow-Origin *
+// app.use(cors({
+//   origin: 'https://www.fromFrontendHost.com'
+// }))
+app.options('*', cors());
+// app.options('/api/v1/tours/:id', cors());
+
 // Serving static files
 app.use(express.static(path.join(__dirname, 'public')));
 
