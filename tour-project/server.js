@@ -8,12 +8,12 @@ process.on('uncaughtException', err => {
 const app = require("./app");
 const mongoose = require("mongoose");
 
-// const DB = process.env.DATABASE.replace(
-//   "<PASSWORD>",
-//   process.env.DATABASE_PASSWORD
-// );
+const DB = process.env.DATABASE.replace(
+  "<PASSWORD>",
+  process.env.DATABASE_PASSWORD
+);
 
-const DB = `mongodb://localhost/tours`;
+// const DB = `mongodb://localhost/tours`;
 
 // database connection
 mongoose
@@ -27,8 +27,9 @@ mongoose
 
 
 // server listening
-const server = app.listen(process.env.APP_PORT || 3000, () => {
-  console.log(`Server is listening port ${process.env.APP_PORT}`);
+const port = process.env.PORT || 8080;
+const server = app.listen(port, () => {
+  console.log(`Server is listening port ${port}`);
 });
 
 

@@ -7,7 +7,9 @@ const Tour = require('../models/tourModel')
 const User = require('../models/UserModel')
 const Review = require('../models/reviewModel')
 
-const DB = `mongodb://localhost/tours`;
+// const DB = `mongodb://localhost/tours`;
+
+const DB = `mongodb+srv://sabbir_ahmmed:<PASSWORD>@cluster0.ozoxu.mongodb.net/natours?retryWrites=true&w=majority`
 
 // database connection
 mongoose
