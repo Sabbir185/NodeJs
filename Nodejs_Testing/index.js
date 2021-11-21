@@ -1,27 +1,16 @@
 const express = require('express')
-const User = require('./models/User')
-const mongoose = require('mongoose')
+const DatabaseConnection = require('./mongo')
+const userRouter = require('./controllers/userConstroller')
 
 const app = express();
 
-app.use(express.json())
+app.use(express.json());
 
+// database
+DatabaseConnection()
 
-// mongodb connection
-const db = 'mongodb://localhost/percelkoi';
-mongoose.connect(db).then(()=> console.log('Database connection success!')).catch(err=> console.log(err))
-
-app.get('/', (req, res) => {
-    const name = req.query.name;
-    res.send('Hello '+name)
-});
-
-app.post('/', async (req, res) => {
-    const username = req.body;
-    const newUser = new User( username );
-    await newUser.save().then(result => res.json(result)).catch(err => console.log(err))
-    // res.send('New user : '+ username);
-})
+// router
+app.use('/user', userRouter)
 
 
 const port = 3000;
