@@ -1,4 +1,5 @@
-const User = require('../models/User')
+const User = require('../models/User');
+const { NotFound } = require('../utils/errors');
 
 exports.userPost = async (data) => {
     const newUser = User({username: data.username});
@@ -28,6 +29,13 @@ exports.userUpdate = async (user) => {
 
 
 exports.deleteUser = async (id) => {
-    const user = await User.findByIdAndDelete( { _id: id } );
-    return user;
+    const userModel = await User.findById(id);
+
+    if(userModel) {
+        const user = await User.findByIdAndDelete( { _id: id } );
+        return user;
+
+    } else {
+        return new NotFound('User not found ! for '+ id)
+    }
 }

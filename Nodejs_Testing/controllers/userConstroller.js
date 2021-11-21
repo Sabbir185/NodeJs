@@ -23,8 +23,13 @@ const patchUpdateHandler = async (req, res) => {
 const deleteHandler = async (req, res) => {
     const id = req.params.id;
     const result = await deleteUser(id);
+    if(result instanceof Error) {
+        const code = result.getCode();
+        res.status(code).send(result.message);
+    } else {
+        res.status(200).send({status: "Deleted success ", result});
+    }
 
-    res.status(200).send({status: "Deleted ", result});
 }
 
 router.get('/', getHandler);
