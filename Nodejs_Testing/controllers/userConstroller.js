@@ -1,11 +1,10 @@
 const express = require('express')
-const User = require('../models/User')
 const router = express.Router();
-const { userPost } = require('../services/userPost')
+const { userPost, getUsers, userUpdate, deleteUser } = require('../services/userPost')
 
-const getHandler = (req, res) => {
-    const name = req.query.name;
-    res.send('Hello '+name)
+const getHandler = async (req, res) => {
+    const users = await getUsers()
+    res.send(users);
 };
 
 const postHandler = async (req, res) => {
@@ -14,8 +13,23 @@ const postHandler = async (req, res) => {
     res.send(user)
 }
 
+const patchUpdateHandler = async (req, res) => {
+    const user = req.body;
+    const updateUser = await userUpdate(user);
+
+    res.status(200).send(updateUser);
+}
+
+const deleteHandler = async (req, res) => {
+    const id = req.params.id;
+    const result = await deleteUser(id);
+
+    res.status(200).send({status: "Deleted ", result});
+}
 
 router.get('/', getHandler);
 router.post('/', postHandler);
+router.patch('/', patchUpdateHandler);
+router.delete('/:id', deleteHandler)
 
 module.exports = router;
