@@ -1,12 +1,12 @@
 const express = require('express')
-const DatabaseConnection = require('./mongo')
+const {DatabaseConnection, db} = require('./mongo')
 const userRouter = require('./controllers/userConstroller');
 const { handleError } = require('./middlewares/handleErrors');
 const winston = require('winston');
 const expressWinston = require('express-winston');
 const winstonFile = require('winston-daily-rotate-file');
 const winstonMongo = require('winston-mongodb');
-const { ElasticsearchTransformer } = require('winston-elasticsearch');
+const { ElasticsearchTransport } = require('winston-elasticsearch');
 
 const app = express();
 
@@ -45,10 +45,19 @@ const fileInfoTransport = new (winston.transports.DailyRotateFile)(
     }
 );
 
+const elasticSearchOptions = {
+    level: 'info',
+    clientOpts: {node: 'http://localhost:9200'},
+    indexPrefix: 'log-parcelkoi'
+}
+const esTransport = new (ElasticsearchTransport)(elasticSearchOptions);
+
+// logger
 const infoLogger = expressWinston.logger({
     transports: [
         new winston.transports.Console(),
-        fileInfoTransport
+        fileInfoTransport,
+        esTransport
     ],
     format: winston.format.combine(winston.format.colorize(), winston.format.json()),
     meta: false, // true for details info
@@ -57,8 +66,36 @@ const infoLogger = expressWinston.logger({
 
 app.use(infoLogger)
 
+
 // router
 app.use('/user', userRouter)
+
+
+// error logger
+const fileErrorTransport = new (winston.transports.DailyRotateFile)(
+    {
+        filename: 'log-error-%DATE%.log',
+        datePattern: 'yyyy-MM-DD-HH'
+    }
+);
+
+const mongoErrorTransport = new winston.transports.MongoDB(
+    {
+        db: db,
+        metaKey: 'meta'
+    }
+);
+
+const errorLogger = expressWinston.errorLogger({
+    transports: [
+        new winston.transports.Console(),
+        fileErrorTransport,
+        mongoErrorTransport,
+        esTransport
+    ],
+});
+
+app.use(errorLogger)
 
 // handle err
 app.use(handleError);
