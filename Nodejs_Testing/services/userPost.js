@@ -24,7 +24,7 @@ exports.userUpdate = async (user) => {
         return updateUser;
     }
 
-    return null;
+    throw new NotFound('User not found ! for '+ id)
 }
 
 
@@ -36,6 +36,6 @@ exports.deleteUser = async (id) => {
         return user;
 
     } else {
-        return new NotFound('User not found ! for '+ id)
+        throw new NotFound('User not found ! for '+ id)
     }
 }

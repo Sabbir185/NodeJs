@@ -1,19 +1,69 @@
 const express = require('express')
 const DatabaseConnection = require('./mongo')
-const userRouter = require('./controllers/userConstroller')
+const userRouter = require('./controllers/userConstroller');
+const { handleError } = require('./middlewares/handleErrors');
+const winston = require('winston');
+const expressWinston = require('express-winston');
+const winstonFile = require('winston-daily-rotate-file');
+const winstonMongo = require('winston-mongodb');
+const { ElasticsearchTransformer } = require('winston-elasticsearch');
 
 const app = express();
 
 app.use(express.json());
 
+// correlation
+const processRequest = async (req, res, next) => {
+    let correlationId = req.headers['x-correlation-id'];
+    if (!correlationId) {
+        correlationId = Date.now().toString();
+        req.headers['x-correlation-id'] = correlationId;
+    }
+
+    res.set('x-correlation-id', correlationId);
+
+    return next();
+}
+
+app.use(processRequest);
+
 // database
-DatabaseConnection()
+DatabaseConnection();
+
+const getMessage = (req, res) => {
+    const obj = {
+        correlationId: req.headers['x-correlation-id'],
+        requestBody: req.body
+    }
+    return JSON.stringify(obj)
+}
+
+const fileInfoTransport = new (winston.transports.DailyRotateFile)(
+    {
+        filename: 'log-info-%DATE%.log',
+        datePattern: 'yyyy-MM-DD-HH'
+    }
+);
+
+const infoLogger = expressWinston.logger({
+    transports: [
+        new winston.transports.Console(),
+        fileInfoTransport
+    ],
+    format: winston.format.combine(winston.format.colorize(), winston.format.json()),
+    meta: false, // true for details info
+    msg: getMessage
+});
+
+app.use(infoLogger)
 
 // router
 app.use('/user', userRouter)
 
+// handle err
+app.use(handleError);
 
 const port = 3000;
 app.listen(port, () => {
-    console.log('Port is listening ',port)
+    console.log('Port is listening ', port)
 });
