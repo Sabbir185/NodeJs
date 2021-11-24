@@ -1,34 +1,10 @@
-const express = require('express')
-const {DatabaseConnection, db} = require('./mongo')
-const userRouter = require('./controllers/userConstroller');
-const { handleError } = require('./middlewares/handleErrors');
+const { db } = require('./mongo')
 const winston = require('winston');
 const expressWinston = require('express-winston');
 const winstonFile = require('winston-daily-rotate-file');
 const winstonMongo = require('winston-mongodb');
 const { ElasticsearchTransport } = require('winston-elasticsearch');
 
-const app = express();
-
-app.use(express.json());
-
-// correlation
-const processRequest = async (req, res, next) => {
-    let correlationId = req.headers['x-correlation-id'];
-    if (!correlationId) {
-        correlationId = Date.now().toString();
-        req.headers['x-correlation-id'] = correlationId;
-    }
-
-    res.set('x-correlation-id', correlationId);
-
-    return next();
-}
-
-app.use(processRequest);
-
-// database
-DatabaseConnection();
 
 const getMessage = (req, res) => {
     const obj = {
@@ -64,12 +40,6 @@ const infoLogger = expressWinston.logger({
     msg: getMessage
 });
 
-app.use(infoLogger)
-
-
-// router
-app.use('/user', userRouter)
-
 
 // error logger
 const fileErrorTransport = new (winston.transports.DailyRotateFile)(
@@ -98,12 +68,9 @@ const errorLogger = expressWinston.errorLogger({
     msg: getMessage
 });
 
-app.use(errorLogger)
 
-// handle err
-app.use(handleError);
 
-const port = 3000;
-app.listen(port, () => {
-    console.log('Port is listening ', port)
-});
+module.exports = {
+    infoLogger,
+    errorLogger
+}
