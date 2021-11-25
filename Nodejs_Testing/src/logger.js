@@ -14,12 +14,12 @@ const getMessage = (req, res) => {
     return JSON.stringify(obj)
 }
 
-const fileInfoTransport = new (winston.transports.DailyRotateFile)(
-    {
-        filename: 'log-info-%DATE%.log',
-        datePattern: 'yyyy-MM-DD-HH'
-    }
-);
+// const fileInfoTransport = new (winston.transports.DailyRotateFile)(
+//     {
+//         filename: 'log-info-%DATE%.log',
+//         datePattern: 'yyyy-MM-DD-HH'
+//     }
+// );
 
 const elasticSearchOptions = {
     level: 'info',
@@ -32,7 +32,12 @@ const esTransport = new (ElasticsearchTransport)(elasticSearchOptions);
 const infoLogger = expressWinston.logger({
     transports: [
         new winston.transports.Console(),
-        fileInfoTransport,
+        new (winston.transports.DailyRotateFile)(
+            {
+                filename: 'log-info-%DATE%.log',
+                datePattern: 'yyyy-MM-DD-HH'
+            }
+        ),
         esTransport
     ],
     format: winston.format.combine(winston.format.colorize(), winston.format.json()),
@@ -42,12 +47,12 @@ const infoLogger = expressWinston.logger({
 
 
 // error logger
-const fileErrorTransport = new (winston.transports.DailyRotateFile)(
-    {
-        filename: 'log-error-%DATE%.log',
-        datePattern: 'yyyy-MM-DD-HH'
-    }
-);
+// const fileErrorTransport = new (winston.transports.DailyRotateFile)(
+//     {
+//         filename: 'log-error-%DATE%.log',
+//         datePattern: 'yyyy-MM-DD-HH'
+//     }
+// );
 
 const mongoErrorTransport = new winston.transports.MongoDB(
     {
@@ -59,7 +64,12 @@ const mongoErrorTransport = new winston.transports.MongoDB(
 const errorLogger = expressWinston.errorLogger({
     transports: [
         new winston.transports.Console(),
-        fileErrorTransport,
+        new (winston.transports.DailyRotateFile)(
+            {
+                filename: 'log-error-%DATE%.log',
+                datePattern: 'yyyy-MM-DD-HH'
+            }
+        ),
         mongoErrorTransport,
         esTransport
     ],
