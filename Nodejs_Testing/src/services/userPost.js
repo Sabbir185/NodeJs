@@ -9,8 +9,14 @@ exports.userPost = async (data) => {
 
 
 exports.getUsers = async () => {
-    const users = User.find();
+    const users = await User.find();
     return users;
+}
+
+
+exports.getUserById = async (id) => {
+    const user = await User.findOne({'_id': Object(id) });
+    return user;
 }
 
 
