@@ -13,9 +13,10 @@ describe('UserController Test Suit', () => {
         expect(users[0].id).toBe('1')
     });
 
+
     test('should return new user id', async () => {
 
-        // create user
+        // post or create user
         const newUser = { username: 'sabbir007' };
         const res = await request(app).post('/user').send(newUser);
 
@@ -30,6 +31,45 @@ describe('UserController Test Suit', () => {
         expect(user.username).toBe(newUser.username);
 
     });
+
+
+    // get user by id
+    test('get a user by id', async () => {
+        const res = await request(app).get('/user/1');
+        const user = res.body;
+        console.log(user)
+    })
+
+
+    // update user
+    test('should update an existing user', async () => {
+        const exUser = {'id': '1', 'username': 'sabbir100'};
+        const response = await request(app).patch('/user').send(exUser);
+        const updateResponse = response.body;
+        console.log(updateResponse);
+        expect(updateResponse.username).toBe(exUser.username)
+    });
+    
+
+    // delete user
+    test('delete by ID and success or fail msg', async () => {
+        const id = '1';
+        const response = await request(app).delete(`/user/${id}`);
+        const deleteInfo = response.body;
+        
+        // success case
+        if(deleteInfo.status) {
+            expect(deleteInfo).not.toBe(null);
+            expect(response.statusCode).toBe(200);
+            expect(deleteInfo.status).toBe('Deleted success');
+        }
+
+        // failure case
+        if(deleteInfo.correlationId) {
+            expect(response.statusCode).toBe(500);
+            expect(deleteInfo.message).toBe(`User not found ! for ${id}`);
+        }
+    })
 
 
 })

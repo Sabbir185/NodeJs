@@ -58,7 +58,7 @@ const deleteHandler = async (req, res, next) => {
     try {
         const id = req.params.id;
         const result = await deleteUser(id);
-        res.status(200).send({ status: "Deleted success ", result });
+        res.status(200).send({ status: "Deleted success", result });
     } catch (error) {
         return next(error, req, res, next);
     }

@@ -1,10 +1,17 @@
 const User = require('../../models/User');
+const { NotFound } = require('../../utils/errors')
 
+const users = [
+    {
+        'id': '1',
+        'username': 'sabbir0088'
+    },
+    {
+        'id': '2',
+        'username': 'sabbir0099'
+    }
+];
 
-const users = [{
-    'id': '1',
-    'username': 'sabbir0078'
-}];
 
 // get all user 
 exports.getUsers = async () => {
@@ -22,8 +29,25 @@ exports.userPost = async (data) => {
 
 // get user by id 
 exports.getUserById =  (id) => {
-    // users[0].id = id;
-    console.log(users)
     const user =  users.find( u => u.id === id);
     return user;
+}
+
+
+// user update
+exports.userUpdate = async (user) => {
+    const updatedUser = users.find( u => u.id === user.id );
+    updatedUser.username = user.username;
+    return updatedUser;
+}
+
+
+// delete user
+exports.deleteUser = async (userId) => {
+    const findUser = users.find( u => u.id === userId );
+    if(findUser) {
+        return findUser;
+    } else {
+        throw new NotFound('User not found ! for '+ userId)
+    }
 }

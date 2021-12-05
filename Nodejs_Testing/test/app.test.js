@@ -9,6 +9,6 @@ describe('user controller test suit', () => {
         expect(res.statusCode).toBe(200);
 
         let users = res.body;
-        expect(users.length).toBe(1);
+        expect(users.length).toBe(2);
     })
 })
