@@ -32,12 +32,12 @@ const esTransport = new (ElasticsearchTransport)(elasticSearchOptions);
 const infoLogger = expressWinston.logger({
     transports: [
         new winston.transports.Console(),
-        new (winston.transports.DailyRotateFile)(
-            {
-                filename: 'log-info-%DATE%.log',
-                datePattern: 'yyyy-MM-DD-HH'
-            }
-        ),
+        // new (winston.transports.DailyRotateFile)(
+        //     {
+        //         filename: 'log-info-%DATE%.log',
+        //         datePattern: 'yyyy-MM-DD-HH'
+        //     }
+        // ),
         esTransport
     ],
     format: winston.format.combine(winston.format.colorize(), winston.format.json()),
@@ -64,12 +64,12 @@ const mongoErrorTransport = new winston.transports.MongoDB(
 const errorLogger = expressWinston.errorLogger({
     transports: [
         new winston.transports.Console(),
-        new (winston.transports.DailyRotateFile)(
-            {
-                filename: 'log-error-%DATE%.log',
-                datePattern: 'yyyy-MM-DD-HH'
-            }
-        ),
+        // new (winston.transports.DailyRotateFile)(
+        //     {
+        //         filename: 'log-error-%DATE%.log',
+        //         datePattern: 'yyyy-MM-DD-HH'
+        //     }
+        // ),
         mongoErrorTransport,
         esTransport
     ],
